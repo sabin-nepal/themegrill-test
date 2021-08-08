@@ -1,0 +1,11 @@
+.tgt_reviews_loop {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.tgt_reviews_loop > * {
+    width: 50%;
+    border: 1px solid grey;
+    padding: 15px;
+    box-shadow: 0 0 15px 0 rgba(90, 90, 90, 0.3);
+}
