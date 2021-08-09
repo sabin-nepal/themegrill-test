@@ -49,6 +49,7 @@ function tgt_rating_filters() {
 		);
 	}
 	$query = new WP_Query( $args );
+	echo '<div class="tgt_reviews_loop" id="tgt-loop">';
 	if ( $query->have_posts() ) :
 		while ( $query->have_posts() ) :
 			$query->the_post();
@@ -57,6 +58,9 @@ function tgt_rating_filters() {
 	else :
 		esc_html_e( 'No rating Found', 'themegrill-test' );
 	endif;
+	echo '</div>';
+	tgt_paginate( $query );
+	wp_reset_query();
 	wp_die();
 }
 // hook to fire when user are logged in
@@ -68,25 +72,37 @@ function tgt_paginations() {
 	if ( ! wp_verify_nonce( $_POST['nonce'], 'tgt_ajax-nonce' ) ) {
 		die( 'Busted!' );
 	}
-	//$data = intval( $_POST['rating'] );
-	$page  = intval( $_POST['page'] );
-	$args  = array(
+	$page   = intval( $_POST['page'] );
+	$latest = rest_sanitize_boolean( $_POST['latest'] );
+	$order  = $latest ? 'DESC' : 'ASC';
+	$args   = array(
 		'post_type'      => 'tgt_review',
 		'posts_per_page' => 5,
 		'paged'          => $page,
+		'order'          => $order,
 	);
-	$query = new WP_Query( $args );
+	$query  = new WP_Query( $args );
 	if ( $query->have_posts() ) :
 		while ( $query->have_posts() ) :
 			$query->the_post();
 			tgt_loop_content();
 		endwhile;
-	else :
-		esc_html_e( 'No page Found', 'themegrill-test' );
 	endif;
+	wp_reset_query();
 	wp_die();
 }
 
+function tgt_paginate( $query ) {
+	$html       = '<div id="paginationAjax">';
+	$total_page = $query->max_num_pages;
+	if ( $total_page > 1 ) {
+		for ( $i = 1; $i <= $total_page; $i++ ) {
+			$html .= '<div><a name="page" href="#" class="pagination" value="' . $i . '">' . $i . '</a></div>';
+		}
+	}
+	$html .= '</div>';
+	echo $html;
+}
 
 function tgt_loop_content() {
 	$html  = '<div class="tgt-items">';

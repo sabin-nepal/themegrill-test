@@ -13,18 +13,19 @@ $args  = array(
 );
 $query = new WP_Query( $args ); ?>
 
-<div class="tgt_reviews">
-	<div class="tgt_order">
-		<select class="tgt_order_select" id="tgt-order">
-			<option value="0"><?php esc_html_e( 'Default', 'themegrill-test' ); ?></option>
-			<?php
-			for ( $i = 1; $i <= 5; $i++ ) {
-				echo '<option value="' . $i . '">' . $i . ' ' . __( 'Rating', 'themegrill-test' ) . '</option>';
-			}
-			?>
-		</select>
-		<input type="checkbox" name="latest" id="latest">Latest
-	</div>
+<div class="tgt_order">
+	<select class="tgt_order_select" id="tgt-order">
+		<option value="0"><?php esc_html_e( 'Default', 'themegrill-test' ); ?></option>
+		<?php
+		for ( $i = 1; $i <= 5; $i++ ) {
+			echo '<option value="' . $i . '">' . $i . ' ' . __( 'Rating', 'themegrill-test' ) . '</option>';
+		}
+		?>
+	</select>
+	<input type="checkbox" name="latest" id="latest">Latest
+</div>
+<div class="tgt-loader"></div>
+<div class="tgt_reviews" id="tgt-reviews">
 	<div class="tgt_reviews_loop" id="tgt-loop">
 		<?php
 		if ( $query->have_posts() ) :
@@ -32,18 +33,13 @@ $query = new WP_Query( $args ); ?>
 				$query->the_post();
 				tgt_loop_content();
 			endwhile;
+		else :
+			esc_html_e( 'No page Found', 'themegrill-test' );
 		endif;
 		?>
 	</div>
-	<div id="paginationAjax">
-		<?php
-		$total_page = $query->max_num_pages;
-		if ( $total_page > 1 ) {
-			for ( $i = 1; $i <= $total_page; $i++ ) {
-				echo '<li><a name="page" href="#" class="pagination" value="' . $i . '">' . $i . '</a></li>';
-			}
-		}
+	<?php
+		tgt_paginate( $query );
 		wp_reset_query();
-		?>
-	</div>
+	?>
 </div>
